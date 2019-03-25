@@ -1,0 +1,74 @@
+#!/bin/bash
+disque=(${1//,/ })
+partitions=(${2//-/ })
+t=0
+declare -A d
+for  i in $(parted -l print  | grep -iE "disk|Disque" | grep -vE "Flags|Mod" | tr -d :| awk '{ print $2}')
+do
+   d[$t]=$i
+   t=$((t + 1))
+done
+
+for(( i=0;i < ${#disque[@]}; i++ ))
+do
+  if [ $i -eq 0 ]; then
+    parted  /dev/sda  unit MB print
+    new_size=`echo "${disque[0]}*1073.74" | bc -l`
+    new_size=`echo "$new_size-500" | bc -l`
+    vgname="$(vgdisplay | grep 'Name' | awk  '{print $3}')"
+    parted -s /dev/sda unit MB resizepart 2 $new_size
+    pvresize /dev/sda2
+    parted  /dev/sda  unit MB print
+  else
+
+    parted -s ${d[$i]} mklabel msdos
+    parted -s ${d[$i]} unit mib mkpart primary 1 100%
+    parted -s ${d[$i]} set 1 lvm on
+    pv=$(fdisk ${d[$i]} -l | tail -n 1| awk -F" " '{print $1}')
+    pvcreate  $pv
+    vgname=vg$i
+    vgcreate $vgname $pv
+
+ fi
+
+ [[ -n ${partitions[$i]} ]] && pati=${partitions[$i]}; part=(${pati//:/ })
+
+  for a in ${part[@]}
+  do
+       arr=(${a//,/ })
+     
+        echo "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        echo ${arr[@]}
+        echo "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+
+       
+       lvname=${arr[0]}
+       if [ ${arr[0]} = "root" ]; then
+      # [[ $(df -h | grep root | awk -F" " '{ print $2 }'| awk -F"," '{ print $1 }' | awk -F"." '{print $1}') -lt ${arr[2]} ]] && \
+       lvextend -L${arr[2]}GiB /dev/$vgname/root
+       [[ ${arr[1]} == "ext4" ]] && resize2fs /dev/$vgname/root
+       [[ ${arr[1]} == "xfs" ]] && xfs_growfs /dev/$vgname/root
+       echo "root"
+       elif [ ${arr[0]} = "swap" ]; then
+          swapoff -v /dev/$vgname/swap
+          lvextend -L ${arr[2]}GiB /dev/$vgname/swap
+          swapon /dev/$vgname/swap
+
+      else
+	 echo "taille du disque"
+	 echo ${arr[2]}
+	       
+         [[ -d /${arr[0]} ]] && (mkdir -p /tmp/${arr[0]}; cp -a /${arr[0]}/. /tmp/${arr[0]}) || mkdir -p /${arr[0]}
+         [[ $( echo ${arr[0]} | grep / ) ]] && lvname=$(echo ${arr[0]} | tr -d /)
+	 echo "taille du disque"
+	 echo ${arr[2]}
+         lvcreate -L${arr[2]}GiB -n$lvname $vgname && \
+         [[ ${arr[1]} == "xfs" ]] && mkfs -t xfs /dev/$vgname/$lvname; \
+         [[ ${arr[1]} == "ext4" ]] &&  mkfs -t ext4 /dev/$vgname/$lvname; \
+         mount /dev/$vgname/$lvname /${arr[0]}
+         [[ -d /tmp/${arr[0]} ]] && (cp -a /tmp/${arr[0]}/. /${arr[0]}; rm -fr /tmp/${arr[0]})
+         echo "/dev/mapper/$vgname-$lvname /${arr[0]} ${arr[1]} defaults 0 0" >> /etc/fstab
+   fi
+
+  done
+done
