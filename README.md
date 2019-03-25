@@ -1,7 +1,8 @@
 # Projet-provisionning-vm
+
 Industralisation de la création des machines virtuelles via esxi avec powercli et bash
   
-Il s'agit d'automatiser la création des VMS avec minimum d'information depuis le shell
+Il s'agit d'automatiser la création des VMS avec un minimum d'information depuis le shell
   
         bash Create-VM disques os.hostname partitions cpu+ram  ip
         
