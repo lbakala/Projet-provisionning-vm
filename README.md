@@ -6,7 +6,7 @@ Il s'agit d'automatiser la création des VMS avec un minimum d'information depui
   
         $ sudo bash Create-VM disques os.hostname partitions cpu+ram ip
        
-Ansible et Co. permettent de provionner les VMS dans un esxi géré depuis un vcenter installé sur un système windows server.
+Ansible et Co. permettent de provisionner les VMS dans un esxi géré depuis un vcenter installé sur un système windows server.
 
 Notre objectif est de produire des machines virtuelles comme dans la restauration rapide ou si on veut comme docker.
 
@@ -97,8 +97,22 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
     }
     backup : 300G {/backup: 300G } 
        
-## 4 - Comment repondre à ses demandes en moins de 5 minuntes ?
+## 4 - Comment repondre à ses demandes en moins de 5 minutes ?
 
+  **Démarche manuelle**
+  
+  Pour repondre à cette demande à la mano (saisie des commandes ligne par ligne)
+  
+  - Création d'une nouvelle machine virtuelle via vsphère web client ou powercli
+  - Suppression du disque de la nouvelle machine
+  - Copie du disque du template concerné(version OS) dans le dossier de la nouvelle vm
+  - Rattachement du nouveau disque copié à la nouvelle vm
+  - Agrandissement du disque système en fonction de la taille attendu selon la demande
+  - Ajout des autres disques 
+  - Démarrage du système
+  - Mise à jour de la taille du disque système
+  - Modification des partions existantes ( agrandissement de / et swap)
+  - Création des nouveaux volumes
 
     
   
