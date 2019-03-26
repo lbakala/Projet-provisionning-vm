@@ -114,14 +114,22 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
   - Modification des partions existantes ( agrandissement de / et swap)
   - Création des nouveaux volumes
   
-  **Démarche manuelle**
+  **Démarche semi-manuelle**
    
   Toutes les opérations après le rédémarrage de la machine virtuelle seront effectuées par un script
   
       [user@controller ~]# ssh serveurftp 'bash -s' < partitionner 20,250 \
                          /,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
         
-   
+ **Partitionner**
+ Il s'agit d'un script bash qui créer les partitions pour nous.
+ Il a deux arguments diques et partitions
+ Les disques sont séparés par une virgule
+ Les partitions des diques sont séparés respectivement par un tiret "-"
+ Soit D1=20 => Partitions {/,xfs,10:swap,swap,4}
+ Soit D2=250 => Partitions {/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40}
+ 
+ 
 
     
   
