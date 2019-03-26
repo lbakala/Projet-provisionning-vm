@@ -32,7 +32,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
     
   Une Machine Linux avec powershell core + Module PowerCLI
      
-  ## Configuration des Templates
+  ## 3 -  Configuration des Templates
   
   Ce sont des machines à partir des quelles nos demandes seront réalisées.
     
@@ -48,7 +48,9 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
       sr0              11:0    1 1024M  0 rom
       
    >**Parted**  :  la version 3.2 prend en charge le redimmentionnement à chaud en ligne de commande.
-   version  présente par défaut sur Debian9; sur Centos7 il faut désinstaller parted 3.1 et compiler la 3.2 depuis les sources.
+   
+   version présente par défaut sur Debian9; sur Centos7 il faut désinstaller parted 3.1
+   et compiler la 3.2 depuis les sources.
    
    
      [user@localhost ~]$ sudo yum remove parted
@@ -74,4 +76,31 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
       >done
       
   >**Installer** les open-vm-tools
+  
+## 3 - Exemples de demandes de création de machines virtuelles
+
+  >**Mise en place d'un serveur ftp**
+  
+    Os : Debian9, 2 disques 
+    system : 20G { / :10G, Swap : 4096M } 
+    data : 250G { /var/lib/ftp : 200G, /var/log/vsftpd : 10G, /home : ~ 40 }
+    
+  >**Mise en place d'un serveur oracle database**
+  
+    Os: Oracle Entreprise Linux 7.6, 3 disques
+    system : 20G { / :10G, Swap : 8Go }
+    data : 190 { 
+    /u01/app/oracle/data : 135G, 
+    /u01/app/oracle/log : 5G, 
+    /u01/app/oracle/arch : 25G, 
+    /u01/app/oracle/product : 25G 
+    }
+    backup : 300G {/backup: 300G } 
+       
+## 4 - Comment repondre à ses demandes en moins de 5 minuntes ?
+
+
+    
+  
+  
       
