@@ -113,6 +113,15 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
   - Mise à jour de la taille du disque système
   - Modification des partions existantes ( agrandissement de / et swap)
   - Création des nouveaux volumes
+  
+  **Démarche manuelle**
+   
+  Toutes les opérations après le rédémarrage de la machine virtuelle seront effectuées par un script
+  
+      [user@controller ~]# ssh serveurftp 'bash -s' < partitionner 20,250 \
+                         /,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
+        
+   
 
     
   
