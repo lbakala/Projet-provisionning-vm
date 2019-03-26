@@ -30,13 +30,13 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
   
   ## 2 - Configuration de la Machine Controller 
     
-     Une Machine Linux avec powershell core + Module PowerCLI
+  Une Machine Linux avec powershell core + Module PowerCLI
      
   ## Configuration des Templates
   
-    Ce sont des machines à partir des quelles nos demandes seront réalisées.
+  Ce sont des machines à partir des quelles nos demandes seront réalisées.
     
-    >**Disque disque** : 6 Giga => /boot : 500 M; LVM-PV : 5,5 Giga ; /root : 4,5;  swap : 1024 M
+  >**Disque disque** : 6 Giga => /boot : 500 M; LVM-PV : 5,5 Giga ; /root : 4,5;  swap : 1024 M
     
       [user@localhost ~]$ sudo lsblk
       NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
@@ -48,7 +48,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
       sr0              11:0    1 1024M  0 rom
       
    >**Parted**  :  la version 3.2 prend en charge le redimmentionnement à chaud en ligne de commande.
-   version  présente par défaut sur Debian9; sur Centos7 il faut désisntaller parted 3.1 et compiler la 3.2 depuis les sources.
+   version  présente par défaut sur Debian9; sur Centos7 il faut désinstaller parted 3.1 et compiler la 3.2 depuis les sources.
    
    
      [user@localhost ~]$ sudo yum remove parted
@@ -65,7 +65,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
      [user@localhost ~]$ sudo ldconfig
      [user@localhost ~]$ sudo parted --version
 
-  >**Installer** la clé public de la machines controller sur toutes les templates
+  >**Installer** la clé public de la machine controller sur toutes les templates
       
       [user@controller ~]$ sudo ssh-keygen -t rsa -b 4096
       [user@controller ~]# sudo for i in ip_template1  ip_template2 ip_template3 ... 
