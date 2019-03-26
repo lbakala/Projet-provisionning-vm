@@ -2,34 +2,76 @@
 
 Industralisation de la création des machines virtuelles via esxi avec powercli et bash
   
-Il s'agit d'automatiser la création des VMS avec un minimum d'information depuis le shell
+Il s'agit d'automatiser la création des VMS avec un minimum d'information depuis le shell comme ceci :
   
-        bash Create-VM disques os.hostname partitions cpu+ram  ip
-        
-        diques : 20 pour un disque de 20 giga
-                 20,50,100 pour trois diques de 20, 50 et 100 giga
-                 
-        os.hostname : Centos7.webserver pour une demande de création d'une vm centos7 avec webserver comme nom de la machine
-        
-        partitions : root,xfs,18 pour une demande de mise en place d'une partition / de 18 giga de type xfs
-                     root,ext4,10 pour une demande de mise en place d'une partition / de 10 giga de type ext4
-                     root,xfs,8:home,xfs,10:opt,xfs,60
-                     root,xfs,10:home,xfs,10-var/lib/mysql,xfs,80 : deux disques sda (/ et home) et sdb (/var/lib/mysql)
-                     
-        cpu+ram : small vcpu=1, ram=1024 M
-                  meduim vpu=x, ram=y
-                  large vcpu=x, ra
-                  x-large vcpu=x, ram=y
-                  
-      bash Create-VM 20 Centos7.webserver root,xfs,10 small 192.168.3.24
+        $ sudo bash Create-VM disques os.hostname partitions cpu+ram ip
+       
+Ansible et Co. permettent de provionner les VMS dans un esxi géré depuis un vcenter installé sur un système windows server.
+
+Notre objectif est de produire des machines virtuelles comme dans la restauration rapide ou si on veut comme docker.
+
+## 1 - Environnement
+
+  2 - hôtes esxi vsphère hyperviseur 6.5
+  
+  1 - Une Machine Controller - Debian9
+  
+  1 - Template Centos7 
+  
+  1 - Template Debian9
+  
+  1 - Template Debian8
+  
+  1 - Template OpenSuse15
+  
+  1 - Template Oracle Entreprise Linux 7
+  
+  1 - Template Arch Linux
+  
+  ## 2 - Configuration de la Machine Controller 
+    
+     Une Machine Linux avec powershell core + Module PowerCLI
+     
+  ## Configuration des Templates
+  
+    Ce sont des machines à partir des quelles nos demandes seront réalisées.
+    
+    >**Disque disque** : 6 Giga => /boot : 500 M; LVM-PV : 5,5 Giga ; /root : 4,5;  swap : 1024 M
+    
+      [user@localhost ~]$ sudo lsblk
+      NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+      sda               8:0    0    6G  0 disk
+      ├─sda1            8:1    0  476M  0 part /boot
+      └─sda2            8:2    0  5,5G  0 part
+        ├─centos-root 253:0    0  4,5G  0 lvm  /
+        └─centos-swap 253:1    0    1G  0 lvm  [SWAP]
+      sr0              11:0    1 1024M  0 rom
       
-      bash Create-VM 20,50 Centos7.webserver root,xfs,10-var/lib/mysql,xfs,40:var/log/mysql,xfs,9 small 192.168.3.24 
-      
-      disques : sda = 20 giga, sdb = 50
-                sda1 /boot ==> 500 M
-                sda2 ==> LVM { LV : swap = 1024M, LV : root = 10G } on peut modifier la swap  si on veut : root,xfs,10:swap:5,swap
-            
+   >**Parted**  :  la version 3.2 prend en charge le redimmentionnement à chaud en ligne de commande.
+   version  présente par défaut sur Debian9; sur Centos7 il faut désisntaller parted 3.1 et compiler la 3.2 depuis les sources.
    
-                sdb ==> LVM { LV: varlibmysql = 40G, LV : varlogmysql = 9G }
-        
-        
+   
+     [user@localhost ~]$ sudo yum remove parted
+     [user@localhost ~]$ sudo yum install epel-release -y
+     [user@localhost ~]$ sudo yum install gcc libuuid-devel device-mapper-devel ncurses rakudo-Readline bc -y
+     [user@localhost ~]$ cd /home/user
+     [user@localhost ~]$ curl -O https://ftp.gnu.org/gnu/parted/parted-3.2.tar.xz
+     [user@localhost ~]$ tar -xvf parted-3.2.tar.xz
+     [user@localhost ~]$ rm -fr parted-3.2.tar.xz
+     [user@localhost ~]$ cd parted-3.2
+     [user@localhost ~]$ sudo ./configure --prefix=/usr
+     [user@localhost ~]$ sudo make
+     [user@localhost ~]$ sudo make install
+     [user@localhost ~]$ sudo ldconfig
+     [user@localhost ~]$ sudo parted --version
+
+  >**Installer** la clé public de la machines controller sur toutes les templates
+      
+      [user@controller ~]$ sudo ssh-keygen -t rsa -b 4096
+      [user@controller ~]# sudo for i in ip_template1  ip_template2 ip_template3 ... 
+      >do
+      >ssh-copy-id -i $i
+      >done
+      
+  >**Installer** les open-vm-tools
+      
