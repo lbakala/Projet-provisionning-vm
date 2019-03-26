@@ -154,7 +154,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
         t=$((t + 1))
      done
      
-     # d[0] , d[1] et d[2]  respectivement /dev/sda, /dev/sdb et /dev/sdc
+     # d[0] , d[1] et d[2]  respectivement /dev/sda
      
     for(( i=0;i < ${#disque[@]}; i++ ))
     do
@@ -162,12 +162,3 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
     # Traitement du disque 1 au disque 2, à n
     
     done
- 
- 
- 
- 
-
-    
-  
-  
-      
