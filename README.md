@@ -164,3 +164,89 @@ Créer le fichier Create-VM avec ses lignes :
          >u01/app/oracle/arch:xfs,25G:\ 
          >u01/app/oracle/product,xfs,25-\
          >backup,xfs,300
+         
+## 6 - Test de réalisations
+
+       $ pwsh
+       PS /home/user> Create-VM 20.190.300 Centos7.svrdb3046prd xzyterdfge large 192.168.0.26
+       CapacityGB      Persistence   Filename    
+       ----------      ----------    --------                
+       20,000          Persistent    [datastore1] svrdb3046prd/Centos7mdl1.vmdk
+       190,000         Persistent    [datastore1] svrdb3046prd/svrdb3046prd.vmdk
+       300,000         Persistent    [datastore1] svrdb3046prd/svrdb3046prd_1.vmdk 
+       xzyterdfge:192.168.x.xx
+       192.168.x.xx
+       
+ - Connexion à la machinne  
+ 
+       PS /home/user> ssh 192.168.x.xx
+       [root@localhost ~]# lsblk
+       NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+       sda               8:0    0   20G  0 disk
+       ├─sda1            8:1    0  476M  0 part /boot
+       └─sda2            8:2    0  5,5G  0 part
+         ├─centos-root 253:0    0  4,5G  0 lvm  /
+         └─centos-swap 253:1    0    1G  0 lvm  [SWAP]
+       sdb               8:16   0  190G  0 disk
+       sdc               8:32   0  300G  0 disk
+       sr0              11:0    1 1024M  0 rom
+       
+ - Vérification des point de montages  
+ 
+        [root@localhost ~]# df -h
+        Sys. de fichiers        Taille Utilisé Dispo Uti% Monté sur
+        /dev/mapper/centos-root   4,6G    1,3G  3,3G  29% /
+        devtmpfs                  909M       0  909M   0% /dev
+        tmpfs                     920M       0  920M   0% /dev/shm
+        tmpfs                     920M    8,5M  912M   1% /run
+        tmpfs                     920M       0  920M   0% /sys/fs/cgroup
+        /dev/sda1                 473M    135M  339M  29% /boot
+        tmpfs                     184M       0  184M   0% /run/user/0
+ 
+ - Vérification de la taille du disque et des partions du premier disque
+ 
+       [root@localhost ~]# fdisk /dev/sda -l
+       Disque /dev/sda : 21.5 Go, 21474836480 octets, 41943040 secteurs
+       Unités = secteur de 1 × 512 = 512 octets
+       Taille de secteur (logique / physique) : 512 octets / 512 octets
+       taille d'E/S (minimale / optimale) : 512 octets / 512 octets
+       Type d'étiquette de disque : dos
+       Identifiant de disque : 0x0001b03d
+      
+       Périphérique Amorçage  Début         Fin      Blocs    Id. Système
+       /dev/sda1   *        2048      976895      487424   83  Linux
+       /dev/sda2          976896    12582911     5803008   8e  Linux LVM
+       [root@localhost ~]#
+      
+ - Vérification de groupes de volumes présents
+ 
+       [root@localhost ~]# vgs
+       VG     #PV #LV #SN Attr   VSize VFree
+       centos   1   2   0 wz--n- 5,53g    0
+     
+- Patitionnement de la machine
+      
+      # ssh 192.168.x.xx 'bash -s' < C 20,190,300 root,xfs,10:swap,swap,8-\
+      >u01/app/oracle/data,xfs,135:\
+      >u01/app/oracle/log,xfs,5:\
+      >u01/app/oracle/arch:xfs,25:\
+      >u01/app/oracle/product,xfs,24-\
+      >backup,xfs,299 
+      
+- Vérification des points de montages
+
+      [root@localhost ~]# df -h
+      Sys. de fichiers                    Taille Utilisé Dispo Uti% Monté sur
+      /dev/mapper/centos-root                10G    1,3G  8,8G  13% /
+      devtmpfs                              909M       0  909M   0% /dev
+      tmpfs                                 920M       0  920M   0% /dev/shm
+      tmpfs                                 920M    8,5M  912M   1% /run
+      tmpfs                                 920M       0  920M   0% /sys/fs/cgroup
+      /dev/sda1                             473M    135M  339M  29% /boot
+      /dev/mapper/vg1-u01apporacledata      135G     33M  135G   1% /u01/app/oracle/data
+      /dev/mapper/vg1-u01apporaclelog       5,0G     33M  5,0G   1% /u01/app/oracle/log
+      /dev/mapper/vg1-u01apporacleproduct    24G     33M   24G   1% /u01/app/oracle/product
+      /dev/mapper/vg2-backup                299G     33M  299G   1% /backup
+      tmpfs                                 184M       0  184M   0% /run/user/0
+
+**Temps de réalisation : 3m22s**
