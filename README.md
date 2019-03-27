@@ -119,10 +119,68 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
   Toutes les opérations après le rédémarrage de la machine virtuelle seront effectuées par un script
   
       [user@controller ~]# ssh serveurftp 'bash -s' < partitionner 20,250 \
-                         /,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
+                         root,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
         
  **Partitionner**
  
  Il s'agit d'un script bash qui crée les partitions pour nous.
  
+ Ce script fait :
+ 
+ place le premier et le deuxième argument dans des tableaux
+ 
+ disque[0]=20 et disque[1]=250  ... n disque
+ 
+ partitions[0]=root,xfs,10:swap,swap,4 et partition[1]=/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
+ 
+ dique[0] est lié à partition[0]
+ 
+     disque=(${1//,/ })
+     partitions=(${2//-/ })
+     t=$(lsblk | grep disk | awk -F ' ' '{print $1}' | sed  's/.*/\/dev\/&/'| tr '\n' ','| sed "s/.$//")
+     d=(${t//,/ })
+ 
+ place les noms des périphériques liés aux disques de la machine dans le tableau d
+ 
+ d=[0]=/dev/sda et d[1]=/dev/sdb ... n périphérique
+   
+ pour  chaque disque présent dans notre tableau de disques
+ 
+ si premier disque : il s'agit du disque système avec la configuration du template
+ 
+ 6 Giga => /boot : 500 M; LVM-PV : 5,5 Giga ; /root : 4,5;  swap : 1024 M
+ 
+ sur vmware la taille de ce disque a été modifiée de 6 à 20 Giga
+ 
+ nous allons modifier la partition /dev/sda2 de 5,5 G à 19,5G
+ 
+     for(( i=0;i < ${#disque[@]}; i++ ))
+     do 
+       if [ $i -eq 0 ]; then
+         new_size=`echo "${disque[0]}*1073.74" | bc -l`
+         new_size=`echo "$new_size-500" | bc -l`
+         vgname="$(vgdisplay | grep 'Name' | awk  '{print $3}')"
+         parted -s /dev/sda unit MB resizepart 2 $new_size
+         pvresize /dev/sda2
+      else
 
+Et s'il ne s'agit pas du premier disque ? 
+
+Toutes les vm templates n'ont qu'un disque
+
+Dans ce cas, il s'agit d'un nouveau disque qui a été nouvellement ajouté à la machine
+
+Nous devrions donc créer une nouvelle table de partitions et une partition primaire full disque de type lvm
+
+Ensuite créer le volume physique et un nouveau groupe de volume 
+
+        parted -s ${d[$i]} mklabel msdos
+        parted -s ${d[$i]} unit mib mkpart primary 1 100%
+        parted -s ${d[$i]} set 1 lvm on
+        pv=$(fdisk ${d[$i]} -l | tail -n 1| awk -F" " '{print $1}')
+        pvcreate  $pv
+        vgname=vg$i
+        vgcreate $vgname $pv
+    fi
+
+Il nous reste a compartimenter le disque comme demander
