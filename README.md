@@ -157,7 +157,7 @@ Créer le fichier Create-VM avec ses lignes :
          [user@controller ~]$ sudo bash Create-VM 20,250 Centos7.serveurftp \
          >root,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
          
-         [user@controller ~]$ sudo bash Create-VM 20,190,300 \
+         [user@controller ~]$ sudo bash Create-VM 20,190,300 Oracle7.svrdb3046prd \
          >root,xfs,20:swap,swap,8-\
          >u01/app/oracle/data,xfs,135:\
          >u01/app/oracle/log,xfs,5:\ 
