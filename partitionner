@@ -1,13 +1,8 @@
 #!/bin/bash
 disque=(${1//,/ })
 partitions=(${2//-/ })
-t=0
-declare -A d
-for  i in $(parted -l print  | grep -iE "disk|Disque" | grep -vE "Flags|Mod" | tr -d :| awk '{ print $2}')
-do
-   d[$t]=$i
-   t=$((t + 1))
-done
+t=$(lsblk | grep disk | awk -F ' ' '{print $1}' | sed  's/.*/\/dev\/&/'| tr '\n' ','| sed "s/.$//")
+d=(${t//,/ })
 
 for(( i=0;i < ${#disque[@]}; i++ ))
 do
