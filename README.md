@@ -123,42 +123,6 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
         
  **Partitionner**
  
- Il s'agit d'un script bash qui créé les partitions pour nous.
+ Il s'agit d'un script bash qui crée les partitions pour nous.
  
- Il a deux arguments : disques et partitions
- 
- Les disques sont séparés par une virgule
- 
- Les partitions des disques sont séparées respectivement par un tiret "-"
- 
- Soit D1=20 => Partitions {/,xfs,10:swap,swap,4}
- 
- Soit D2=250 => Partitions {/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40}
- 
-     #!/bin/bash
-     disque=(${1//,/ })
-       # récupération des disques dans un tableau
-       # disque[0] et disque[1] dans notre exemple 20 et 250 
-       
-     partitions=(${2//-/ })
-       # récupération des partitions de chaque disque dans un tableau
-       # partions[0] et partions[1], /,xfs,10:swap,swap,4 et /var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
-     
-     t=0
-     declare -A d
-     
-     # récupération des noms de disques physiques depuis le système 
-     for  i in $(parted -l print  | grep -iE "disk|Disque" | grep -vE "Flags|Mod" | tr -d :| awk '{ print $2}')
-     do
-        d[$t]=$i
-        t=$((t + 1))
-     done
-     
-     # d[0] , d[1] et d[2]  respectivement /dev/sda
-     
-    for(( i=0;i < ${#disque[@]}; i++ ))
-    do
-    
-    # Traitement du disque 1 au disque 2, à n
-    
-    done
+
