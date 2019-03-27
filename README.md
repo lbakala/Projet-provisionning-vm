@@ -152,5 +152,15 @@ Créer le fichier Create-VM avec ses lignes :
       ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $adr 'hostnamectl set-hostname' $machine
       ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $adr 'bash -s' < /home/user/partitionner $disque $partition
  
+ ## 5 - Creation des machines virtuelles
  
- 
+         [user@controller ~]$ sudo bash Create-VM 20,250 Centos7.serveurftp \
+         >root,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
+         
+         [user@controller ~]$ sudo bash Create-VM 20,190,300 \
+         >root,xfs,20:swap,swap,8-\
+         >u01/app/oracle/data,xfs,135:\
+         >u01/app/oracle/log,xfs,5:\ 
+         >u01/app/oracle/arch:xfs,25G:\ 
+         >u01/app/oracle/product,xfs,25-\
+         >backup,xfs,300
