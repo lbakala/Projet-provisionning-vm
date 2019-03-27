@@ -227,7 +227,7 @@ Créer le fichier Create-VM avec ses lignes :
      
 - Patitionnement de la machine
       
-      # ssh 192.168.x.xx 'bash -s' < C 20,190,300 root,xfs,10:swap,swap,8-\
+      # ssh 192.168.x.xx 'bash -s' < partitionner 20,190,300 root,xfs,10:swap,swap,8-\
       >u01/app/oracle/data,xfs,135:\
       >u01/app/oracle/log,xfs,5:\
       >u01/app/oracle/arch:xfs,25:\
@@ -250,4 +250,5 @@ Créer le fichier Create-VM avec ses lignes :
       /dev/mapper/vg2-backup                299G     33M  299G   1% /backup
       tmpfs                                 184M       0  184M   0% /run/user/0
 
-**Temps de réalisation : 3m22s**
+**Temps de réalisation en deux temps : 3m22s**
+**Temps de réalisation avec un script de bout en bout : 2m11s**
