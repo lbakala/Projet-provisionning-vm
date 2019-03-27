@@ -251,4 +251,5 @@ Créer le fichier Create-VM avec ses lignes :
       tmpfs                                 184M       0  184M   0% /run/user/0
 
 **Temps de réalisation en deux temps : 3m22s**
+
 **Temps de réalisation avec un script de bout en bout : 2m11s**
