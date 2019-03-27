@@ -142,11 +142,12 @@ Créer le fichier Create-VM avec ses lignes :
       size=$4
       server=$5
       key="$(openssl rand -base64 32)"
-      key="$(echo $kip | tr -d [/+=' '])"
+      key="$(echo $key | tr -d [/+=' '])"
+      disques=$(echo $disque | tr ',' '.' )
 
-      pwsh -Command Create-VM $disque $os $key $size $server
+      pwsh -Command Create-VM $disques $os $key $size $server
 
-      adr="$(awk -v var=$kip -F ':' '$1==var { print $2}' /home/user/op/pzK5HdpIxXTnB2Ml)"
+      adr="$(awk -v var=$key -F ':' '$1==var { print $2}' /home/user/op/pzK5HdpIxXTnB2Ml)"
       machine=${os##*.}
       sed -i "/"$adr"/d"  /home/user/op/pzK5HdpIxXTnB2Ml
       ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $adr 'hostnamectl set-hostname' $machine
