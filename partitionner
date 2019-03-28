@@ -13,7 +13,7 @@ do
     vgname="$(vgdisplay | grep 'Name' | awk  '{print $3}')"
     numpart=$(parted /dev/sda print | tail -n 2 | head -n 1 | awk -F' ' '{print $1}')
     parted -s /dev/sda unit MB resizepart $numpart $new_size
-    pvresize /dev/sda2
+    pvresize /dev/sda$numpart
     parted  /dev/sda  unit MB print
   else
 
