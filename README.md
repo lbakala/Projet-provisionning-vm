@@ -1,6 +1,6 @@
 # Projet-provisionning-vm
 
-Industralisation de la création des machines virtuelles via esxi avec powercli et bash
+Industrialisation de la création des machines virtuelles via esxi avec powercli et bash
   
 Il s'agit d'automatiser la création des VMS avec un minimum d'information depuis le shell comme ceci :
   
@@ -75,7 +75,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
       >ssh-copy-id -i $i
       >done
       
-  >**Installer** les open-vm-tools
+  >**Installer** les open-vm-tools et bc
   
 ## 3 - Exemples de demandes de création de machines virtuelles
 
@@ -133,7 +133,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
       
       PS /home/user/projet/vm> Get-Module -ListAvailable
 
-Créer le fichier Create-VM avec ses lignes :
+Créer le fichier Create-VM avec ces lignes :
  
       #!/bin/bash
       disque=$1
@@ -166,7 +166,7 @@ Créer le fichier Create-VM avec ses lignes :
          >u01/app/oracle/product,xfs,25-\
          >backup,xfs,300
          
-## 6 - Test de réalisations
+## 6 - Test de réalisation
 
        $ pwsh
        PS /home/user> Create-VM 20.190.300 Centos7.svrdb3046prd xzyterdfge large 192.168.0.26
