@@ -11,7 +11,8 @@ do
     new_size=`echo "${disque[0]}*1073.74" | bc -l`
     new_size=`echo "$new_size-500" | bc -l`
     vgname="$(vgdisplay | grep 'Name' | awk  '{print $3}')"
-    parted -s /dev/sda unit MB resizepart 2 $new_size
+    numpart=$(parted /dev/sda print | tail -n 2 | head -n 1 | awk -F' ' '{print $1}')
+    parted -s /dev/sda unit MB resizepart $numpart $new_size
     pvresize /dev/sda2
     parted  /dev/sda  unit MB print
   else
