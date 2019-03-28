@@ -36,9 +36,7 @@ do
        lvname=${arr[0]}
        if [ ${arr[0]} = "root" ]; then
       # [[ $(df -h | grep root | awk -F" " '{ print $2 }'| awk -F"," '{ print $1 }' | awk -F"." '{print $1}') -lt ${arr[2]} ]] && \
-       lvextend -L${arr[2]}GiB /dev/$vgname/root
-       [[ ${arr[1]} == "ext4" ]] && resize2fs /dev/$vgname/root
-       [[ ${arr[1]} == "xfs" ]] && xfs_growfs /dev/$vgname/root
+       lvextend -r -L${arr[2]}GiB /dev/$vgname/root
        
        elif [ ${arr[0]} = "swap" ]; then
           swapoff -v /dev/$vgname/swap
