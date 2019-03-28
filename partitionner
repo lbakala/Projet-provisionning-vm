@@ -39,10 +39,12 @@ do
        lvextend -r -L${arr[2]}GiB /dev/$vgname/root
        
        elif [ ${arr[0]} = "swap" ]; then
-          swapoff -v /dev/$vgname/swap
-          lvextend -L ${arr[2]}GiB /dev/$vgname/swap
-          swapon /dev/$vgname/swap
-
+         
+          lvextend -L ${arr[2]}GiB /dev/mapper$vgname-swap
+	  swapoff -a
+	  mkswap /dev/mapper/$vgname-swap
+          swapon /dev/mapper/$vgname-swap
+	  
       else	       
          [[ -d /${arr[0]} ]] && (mkdir -p /tmp/${arr[0]}; cp -a /${arr[0]}/. /tmp/${arr[0]}) || mkdir -p /${arr[0]}
          [[ $( echo ${arr[0]} | grep / ) ]] && lvname=$(echo ${arr[0]} | tr -d /)
