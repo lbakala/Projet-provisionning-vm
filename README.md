@@ -31,6 +31,59 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
   ## 2 - Configuration de la Machine Controller 
     
   Une Machine Linux avec powershell core + Module PowerCLI
+  
+  Les fichiers ci dessous seront utilisés pour les credentials et les caractéristiques de la vm. 
+  
+      $ sudo ls -l /root/.vmware
+        ---------- 1 root root 243 Mar 23 13:10 co.xml
+        ---------- 1 root root 788 Mar 28 02:38 route.xml
+        
+   >**/root/.vmware/co.xml**
+   
+         <?xml version="1.0" encoding="iso-8859-1"?>
+         <data>
+         <server>
+         <ip>192.xx.xx.xx</ip>
+         <user>root</user>
+         <pwd>******</pwd>
+         </server>
+         <server>
+         <ip>192.xx.xx.xx</ip>
+         <user>root</user>
+         <pwd>*********</pwd>
+         </server>
+         </data>
+         
+  >**/root/.vmware/route.xml**
+   
+         <?xml version="1.0" encoding="iso-8859-1"?>
+         <data>
+         <image>
+           <nom>Debian9</nom>
+           <guestid>debian9_64Guest</guestid>
+           <template>Debian9mdl</template>
+           <boot>bios</boot>
+         </image>
+         <image>
+           <nom>Centos7</nom>
+           <guestid>Centos7_64Guest</guestid>
+           <template>Centos7mdl1</template>
+           <boot>bios</boot>
+         </image>
+         <image>
+           <nom>Opensuse15</nom>
+           <guestid>opensuse64Guest</guestid>
+           <template>Opensuse15mdl11</template>
+           <boot>efi</boot>
+         </image>
+         <size>
+           <type name="small" memory="1" cpu="1" disk="8" />
+           <type name="meduim" memory="2" cpu="1" disk="8" />
+           <type name="large" memory="2" cpu="2" disk="8" />
+           <type name="x-large" memory="4" cpu="2" disk="8" />
+           <type name="xxl" memory="8" cpu="2" disk="8" />
+         </size>
+         </data>  
      
   ## 3 -  Configuration des Templates
   
@@ -156,7 +209,7 @@ Créer le fichier Create-VM avec ces lignes :
  ## 5 - Creation des machines virtuelles
  
          [user@controller ~]$ sudo bash Create-VM 20,250 Centos7.serveurftp \
-         >root,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40
+         >root,xfs,10:swap,swap,4-/var/lib/ftp,xfs,200:/var/log/vsftpd,xfs,10:/home,xfs,40 large 102.xx.xx.xx
          
          [user@controller ~]$ sudo bash Create-VM 20,190,300 Oracle7.svrdb3046prd \
          >root,xfs,20:swap,swap,8-\
@@ -164,7 +217,7 @@ Créer le fichier Create-VM avec ces lignes :
          >u01/app/oracle/log,xfs,5:\ 
          >u01/app/oracle/arch:xfs,25G:\ 
          >u01/app/oracle/product,xfs,25-\
-         >backup,xfs,300
+         >backup,xfs,300 large 102.xx.xx.xx
          
 ## 6 - Test de réalisation
 
