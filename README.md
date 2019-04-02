@@ -32,7 +32,7 @@ Notre objectif est de produire des machines virtuelles comme dans la restauratio
     
   Une Machine Linux avec powershell core + Module PowerCLI
   
-  Les fichiers ci dessous seront utilisés pour les credentials et les caractéristiques de la vm. 
+  Les fichiers ci dessous seront utilisés pour les credentials des hyperviseurs et les caractéristiques de la vm. 
   
       $ sudo ls -l /root/.vmware
         ---------- 1 root root 243 Mar 23 13:10 co.xml
